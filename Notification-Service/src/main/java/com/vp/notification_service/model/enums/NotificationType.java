@@ -1,4 +1,4 @@
-package com.vp.content_service.model.enums;
+package com.vp.notification_service.model.enums;
 
 public enum NotificationType {
     PUBLISHED,
