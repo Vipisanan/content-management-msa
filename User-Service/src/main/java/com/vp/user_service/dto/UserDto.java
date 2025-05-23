@@ -1,18 +1,14 @@
 package com.vp.user_service.dto;
 
-import lombok.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class UserResponseDto {
+@Data
+public class UserDto {
     private Long id;
     private String email;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
+    private ProfileDto profile;
+    private boolean canPublish;
 }

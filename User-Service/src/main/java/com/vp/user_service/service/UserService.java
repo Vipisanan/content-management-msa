@@ -1,16 +1,22 @@
 package com.vp.user_service.service;
 
-import com.vp.user_service.dto.UserResponseDto;
-import com.vp.user_service.dto.UserSignupRequestDto;
+import com.vp.user_service.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
-    void registerUser(UserSignupRequestDto request);
+    User registerUser(User user);
 
-    UserResponseDto getUserById(Long id);
+    Optional<User> getUserById(Long id);
 
-    List<UserResponseDto> getAllUsers();
+    Optional<User> getUserByEmail(String email);
+
+    List<User> getAllUsers();
+
+    boolean existsByEmail(String email);
+
+    User updateUser(Long id, User updatedUser);
 
     void deleteUser(Long id);
 }
