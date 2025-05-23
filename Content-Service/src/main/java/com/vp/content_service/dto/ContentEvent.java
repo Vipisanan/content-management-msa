@@ -1,19 +1,13 @@
-package com.vp.notification_service.kafka;
+package com.vp.content_service.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.vp.notification_service.model.enums.NotificationType;
-import lombok.AllArgsConstructor;
+import com.vp.content_service.dto.enums.NotificationType;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 // Kafka Listener for Content Events
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class ContentEvent {
     private Long contentId;

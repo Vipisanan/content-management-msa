@@ -1,5 +1,6 @@
 package com.vp.notification_service.kafka;
 
+import com.vp.notification_service.constant.AppConstant;
 import com.vp.notification_service.model.Notification;
 import com.vp.notification_service.repository.NotificationRepository;
 import com.vp.notification_service.service.SubscriptionService;
@@ -16,7 +17,7 @@ public class NotificationKafkaListener {
     private final NotificationRepository notificationRepo;
     private final SubscriptionService subscriptionService;
 
-    @KafkaListener(topics = "content-events", groupId = "notification-service")
+    @KafkaListener(topics = AppConstant.CONTENT_EVENT_KTP, groupId = "notification-service-group")
     public void handleContentEvent(ContentEvent event) {
         for (Long catId : event.getCategoryIds()) {
             List<Long> userIds = subscriptionService.findUserIdsByCategoryId(catId);

@@ -1,8 +1,11 @@
 package com.vp.content_service.service.impl;
 
+import com.vp.content_service.constant.AppConstant;
 import com.vp.content_service.dto.CategoryCreateRequest;
 import com.vp.content_service.dto.ContentDto;
+import com.vp.content_service.dto.ContentEvent;
 import com.vp.content_service.dto.CreateContentDto;
+import com.vp.content_service.dto.enums.NotificationType;
 import com.vp.content_service.mapper.ContentMapper;
 import com.vp.content_service.model.Category;
 import com.vp.content_service.model.Content;
@@ -15,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -31,6 +35,7 @@ public class ContentServiceImpl implements ContentService {
     private final CategoryRepository categoryRepository;
     private final ContentMapper contentMapper;
     private final CategoryService categoryService;
+    private final KafkaTemplate<String, ContentEvent> kafkaTemplate;
 
 
     @Override
@@ -61,6 +66,20 @@ public class ContentServiceImpl implements ContentService {
 
         // Save and map back to DTO
         Content saved = contentRepository.save(content);
+        ContentEvent contentEvent = ContentEvent
+                .builder()
+                .contentId(saved.getId())
+                .writerId(saved.getWriterId())
+                .type(NotificationType.PUBLISHED)
+                .categoryIds(
+                        saved.getCategories()
+                                .stream()
+                                .map(Category::getId)
+                                .collect(Collectors.toList()))
+                .title(saved.getTitle())
+                .summary(saved.getDetails())
+                .build();
+        kafkaTemplate.send(AppConstant.CONTENT_EVENT_KTP, contentEvent);
         return contentMapper.toDto(saved);
     }
 

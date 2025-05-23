@@ -8,6 +8,12 @@ import java.util.List;
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
 
+    boolean existsByUserIdAndCategoryId(Long userId, Long categoryId);
+
+    Subscription findByUserIdAndCategoryId(Long userId, Long categoryId);
+
+    List<Subscription> findByCategoryId(Long categoryId);
+
     @Query("SELECT s.userId FROM Subscription s WHERE s.categoryId = :categoryId")
     List<Long> findUserIdsByCategoryId(Long categoryId);
 }
