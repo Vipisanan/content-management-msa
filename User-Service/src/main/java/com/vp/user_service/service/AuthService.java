@@ -33,7 +33,7 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user.getEmail());
 
-        return new LoginResponseDto(token, user.getId(), user.getEmail());
+        return new LoginResponseDto(token, user.getId(), user.getEmail(), user.canPublish());
     }
 
     public User registerUser(UserCreateRequest userCreateRequest) {
