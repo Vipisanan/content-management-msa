@@ -3,6 +3,7 @@ package com.vp.user_service.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -12,7 +13,8 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private static final String SECRET_KEY = "your_very_secret_key_12345"; // use a secure key in production
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
 
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
