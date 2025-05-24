@@ -1,5 +1,6 @@
 package com.vp.user_service.service;
 
+import com.vp.user_service.dto.LoginResponseDto;
 import com.vp.user_service.dto.UserCreateRequest;
 import com.vp.user_service.exception.InvalidPasswordException;
 import com.vp.user_service.exception.UserAlreadyExistsException;
@@ -22,7 +23,7 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public String authenticate(String email, String password) {
+    public LoginResponseDto authenticate(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -30,7 +31,9 @@ public class AuthService {
             throw new InvalidPasswordException("Invalid password");
         }
 
-        return jwtUtil.generateToken(user.getEmail());
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        return new LoginResponseDto(token, user.getId(), user.getEmail());
     }
 
     public User registerUser(UserCreateRequest userCreateRequest) {

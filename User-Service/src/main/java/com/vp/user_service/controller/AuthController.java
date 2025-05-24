@@ -25,8 +25,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request) {
-        String token = authService.authenticate(request.getEmail(), request.getPassword());
-        return ResponseEntity.ok(new LoginResponseDto(token));
+        LoginResponseDto loginResponseDto = authService.authenticate(request.getEmail(), request.getPassword());
+        return ResponseEntity.ok(loginResponseDto);
     }
     // Register a new user
     @PostMapping("/signup")
