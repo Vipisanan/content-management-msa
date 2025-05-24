@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -44,13 +45,7 @@ public class ContentServiceImpl implements ContentService {
         // Fetch categories by name if not exist crete a category
         Set<Category> categories = Collections.emptySet();
         if (createContentDto.getCategoryNames() != null && !createContentDto.getCategoryNames().isEmpty()) {
-//            categories = new HashSet<>(categoryRepository.findByNameIgnoreCase(createContentDto.getCategoryNames()));
-//            if (categories.isEmpty()) {
-//                createContentDto.getCategoryNames().forEach(category -> {
-//                    CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest(category);
-//                    categoryService.createCategory(categoryCreateRequest);
-//                });
-//            }
+
 //            TODO: when crete a category here, Notification service doesn't read it
             createContentDto.getCategoryNames().forEach(category -> {
                 Optional<Category> existedCategory = categoryRepository.findByNameIgnoreCase(category);
@@ -64,7 +59,9 @@ public class ContentServiceImpl implements ContentService {
 
         // Map to entity
         Content content = contentMapper.toEntity(createContentDto, categories);
-
+        LocalDateTime now = LocalDateTime.now();
+        content.setDatePublished(now);
+        content.setUpdatedAt(now);
         // Save and map back to DTO
         Content saved = contentRepository.save(content);
         ContentEvent contentEvent = ContentEvent

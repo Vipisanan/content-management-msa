@@ -48,8 +48,6 @@ public class ContentMapper {
         Content content = new Content();
         content.setTitle(dto.getTitle());
         content.setDetails(dto.getDetails());
-        content.setDatePublished(dto.getDatePublished());
-        content.setUpdatedAt(dto.getUpdatedAt());
         content.setWriterId(dto.getWriterId());
         content.setCategories(categories);
         return content;

@@ -13,7 +13,5 @@ public class CreateContentDto {
     private Long writerId;
     private String title;
     private String details;
-    private LocalDateTime datePublished;
-    private LocalDateTime updatedAt;
     private Set<String> categoryNames;
 }
