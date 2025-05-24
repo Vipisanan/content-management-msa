@@ -51,6 +51,7 @@ public class ContentServiceImpl implements ContentService {
 //                    categoryService.createCategory(categoryCreateRequest);
 //                });
 //            }
+//            TODO: when crete a category here, Notification service doesn't read it
             createContentDto.getCategoryNames().forEach(category -> {
                 Optional<Category> existedCategory = categoryRepository.findByNameIgnoreCase(category);
                 if (!existedCategory.isPresent()) {
