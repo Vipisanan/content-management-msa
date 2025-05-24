@@ -2,6 +2,7 @@ package com.vp.notification_service.service.impl;
 
 import com.vp.notification_service.dto.SubscriptionRequestDto;
 import com.vp.notification_service.dto.SubscriptionResponseDto;
+import com.vp.notification_service.dto.UserSubscriptionResponseDto;
 import com.vp.notification_service.mapper.SubscriptionMapper;
 import com.vp.notification_service.model.Subscription;
 import com.vp.notification_service.repository.SubscriptionRepository;
@@ -10,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -50,5 +52,13 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     public List<Long> findUserIdsByCategoryId(Long categoryId) {
         return subscriptionRepository.findUserIdsByCategoryId(categoryId);
+    }
+
+    @Override
+    public List<UserSubscriptionResponseDto> getAllSubscriptionsByUserId(Long userId) {
+        List<Subscription> subscriptions = subscriptionRepository.findByUserId(userId);
+        return subscriptions.stream()
+                .map(SubscriptionMapper::toDto)
+                .collect(Collectors.toList());
     }
 }
