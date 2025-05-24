@@ -7,7 +7,7 @@ import com.vp.user_service.exception.UserNotFoundException;
 import com.vp.user_service.mapper.UserMapper;
 import com.vp.user_service.model.User;
 import com.vp.user_service.repository.UserRepository;
-import com.vp.user_service.security.JwtTokenUtil;
+import com.vp.user_service.security.JwtUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
-    private final JwtTokenUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
     private final PasswordEncoder passwordEncoder;
 
