@@ -23,16 +23,6 @@ public class UserController {
 
     private final UserService userService;
 
-    // Register a new user
-    @PostMapping("/register")
-    public ResponseEntity<UserDto> registerUser(@Valid @RequestBody UserCreateRequest request) {
-        if (userService.existsByEmail(request.getEmail())) {
-            return ResponseEntity.badRequest().build();
-        }
-        User user = UserMapper.toUser(request);
-        User created = userService.registerUser(user);
-        return ResponseEntity.ok(UserMapper.toDto(created));
-    }
 
     // Get all users
     @GetMapping

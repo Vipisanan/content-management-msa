@@ -4,27 +4,20 @@ package com.vp.user_service.service.impl;
 import com.vp.user_service.model.User;
 import com.vp.user_service.repository.UserRepository;
 import com.vp.user_service.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Override
-    public User registerUser(User user) {
-        // Add any validation, password hashing, etc. here
-        return userRepository.save(user);
-    }
 
     @Override
     public Optional<User> getUserById(Long id) {
@@ -33,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> getUserByEmail(String email) {
-        return Optional.ofNullable(userRepository.findByEmail(email));
+        return userRepository.findByEmail(email);
     }
 
     @Override
@@ -50,7 +43,7 @@ public class UserServiceImpl implements UserService {
     public User updateUser(Long id, User updatedUser) {
         return userRepository.findById(id).map(user -> {
             user.setEmail(updatedUser.getEmail());
-            user.setPasswordHash(updatedUser.getPasswordHash());
+            user.setPasswordHash(passwordEncoder.encode(updatedUser.getPasswordHash()));
             //TODO: Set other fields as needed
             return userRepository.save(user);
         }).orElseThrow(() -> new RuntimeException("User not found"));
