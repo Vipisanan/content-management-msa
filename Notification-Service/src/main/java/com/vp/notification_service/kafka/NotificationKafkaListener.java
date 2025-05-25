@@ -12,7 +12,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.vp.notification_service.util.NotificationMessageUtil.buildReadableMessage;
 
 @Service
 @AllArgsConstructor
@@ -32,18 +36,20 @@ public class NotificationKafkaListener {
 
         LocalDateTime now = LocalDateTime.now();
 
-        for (Long userId : userIds) {
-            Notification notification = Notification.builder()
-                    .userId(userId)
-                    .contentId(event.getContentId())
-                    .categoryId(null) // or choose a representative category, or store all, as needed
-                    .type(event.getType())
-                    .message("Content '" + event.getTitle() + "' was " + event.getType())
-                    .isRead(false)
-                    .createdAt(now)
-                    .build();
-            notificationSenderService.sendNotificationToUser(userId, NotificationMapper.toDto(notification));
-            notificationRepo.save(notification);
-        }
+        List<Notification> notifications = userIds.stream()
+                .map(userId -> Notification.builder()
+                        .userId(userId)
+                        .contentId(event.getContentId())
+                        .categoryId(null) // or choose a representative category, or store all, as needed
+                        .type(event.getType())
+                        .message(buildReadableMessage(event.getTitle(), event.getType()))
+                        .isRead(false)
+                        .createdAt(now)
+                        .build())
+                .toList();
+        notificationSenderService.sendNotificationsToUsers(
+                notifications.stream().map(NotificationMapper::toDto).collect(Collectors.toList())
+        );
+        notificationRepo.saveAll(notifications);
     }
 }

@@ -6,6 +6,7 @@ import com.vp.content_service.dto.ContentDto;
 import com.vp.content_service.dto.ContentEvent;
 import com.vp.content_service.dto.CreateContentDto;
 import com.vp.content_service.dto.enums.NotificationType;
+import com.vp.content_service.mapper.ContentEventMapper;
 import com.vp.content_service.mapper.ContentMapper;
 import com.vp.content_service.model.Category;
 import com.vp.content_service.model.Content;
@@ -64,19 +65,7 @@ public class ContentServiceImpl implements ContentService {
         content.setUpdatedAt(now);
         // Save and map back to DTO
         Content saved = contentRepository.save(content);
-        ContentEvent contentEvent = ContentEvent
-                .builder()
-                .contentId(saved.getId())
-                .writerId(saved.getWriterId())
-                .type(NotificationType.PUBLISHED)
-                .categoryIds(
-                        saved.getCategories()
-                                .stream()
-                                .map(Category::getId)
-                                .collect(Collectors.toList()))
-                .title(saved.getTitle())
-                .summary(saved.getDetails())
-                .build();
+        ContentEvent contentEvent = ContentEventMapper.toEvent(saved, NotificationType.PUBLISHED);
         kafkaTemplate.send(AppConstant.CONTENT_EVENT_KTP, contentEvent);
         return contentMapper.toDto(saved);
     }
@@ -109,13 +98,17 @@ public class ContentServiceImpl implements ContentService {
         }
 
         Content updated = contentRepository.save(content);
+        ContentEvent contentEvent = ContentEventMapper.toEvent(updated, NotificationType.UPDATED);
+        kafkaTemplate.send(AppConstant.CONTENT_EVENT_KTP, contentEvent);
         return contentMapper.toDto(updated);
     }
 
     @Override
     public void deleteContent(Long id) {
-        Content content = contentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Content not found with id: " + id));
-
+        Content content = contentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Content not found with id: " + id));
         contentRepository.delete(content);
+        ContentEvent contentEvent = ContentEventMapper.toEvent(content, NotificationType.DELETED);
+        kafkaTemplate.send(AppConstant.CONTENT_EVENT_KTP, contentEvent);
     }
 }
