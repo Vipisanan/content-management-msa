@@ -1,5 +1,7 @@
 package com.vp.user_service.service;
 
+import com.vp.user_service.dto.ProfileRequestDto;
+import com.vp.user_service.dto.UserDto;
 import com.vp.user_service.model.User;
 
 import java.util.List;
@@ -16,7 +18,9 @@ public interface UserService {
 
     boolean existsByEmail(String email);
 
-    User updateUser(Long id, User updatedUser);
+    UserDto updateUser(Long id, User updatedUser);
 
     void deleteUser(Long id);
+
+    UserDto addProfile(User user, ProfileRequestDto profileDto);
 }

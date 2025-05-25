@@ -1,6 +1,9 @@
 package com.vp.user_service.service.impl;
 
 
+import com.vp.user_service.dto.ProfileRequestDto;
+import com.vp.user_service.dto.UserDto;
+import com.vp.user_service.mapper.UserMapper;
 import com.vp.user_service.model.User;
 import com.vp.user_service.repository.UserRepository;
 import com.vp.user_service.service.UserService;
@@ -40,17 +43,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(Long id, User updatedUser) {
-        return userRepository.findById(id).map(user -> {
-            user.setEmail(updatedUser.getEmail());
-            user.setPasswordHash(passwordEncoder.encode(updatedUser.getPasswordHash()));
+    public UserDto updateUser(Long id, User updatedUser) {
+        User user = userRepository.findById(id).map(u -> {
+            u.setEmail(updatedUser.getEmail());
+            u.setPasswordHash(passwordEncoder.encode(updatedUser.getPasswordHash()));
             //TODO: Set other fields as needed
-            return userRepository.save(user);
+            return userRepository.save(u);
         }).orElseThrow(() -> new RuntimeException("User not found"));
+        return UserMapper.toDto(user);
     }
 
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public UserDto addProfile(User user, ProfileRequestDto profileDto) {
+        user = UserMapper.addProfileToUser(user, profileDto);
+        userRepository.save(user);
+        return UserMapper.toDto(user);
     }
 }

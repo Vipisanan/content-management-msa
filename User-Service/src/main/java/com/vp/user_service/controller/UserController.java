@@ -1,9 +1,7 @@
 package com.vp.user_service.controller;
 
 
-import com.vp.user_service.dto.ProfileDto;
-import com.vp.user_service.dto.ProfileUpdateRequest;
-import com.vp.user_service.dto.UserCreateRequest;
+import com.vp.user_service.dto.ProfileRequestDto;
 import com.vp.user_service.dto.UserDto;
 import com.vp.user_service.mapper.UserMapper;
 import com.vp.user_service.model.User;
@@ -22,7 +20,6 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-
 
     // Get all users
     @GetMapping
@@ -55,21 +52,20 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    // Update profile for a user (since email/password cannot be updated)
     @PutMapping("/{id}/profile")
-    public ResponseEntity<ProfileDto> updateProfile(
+    public ResponseEntity<UserDto> addProfile(
             @PathVariable Long id,
-            @Valid @RequestBody ProfileUpdateRequest request) {
+            @Valid @RequestBody ProfileRequestDto request) {
         Optional<User> userOpt = userService.getUserById(id);
         if (userOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         User user = userOpt.get();
-        if (user.getProfile() == null) {
+        if (user.getProfile() != null) {
+            // Profile already exists, adding not allowed
             return ResponseEntity.badRequest().build();
         }
-        UserMapper.updateProfileFromDto(request, user.getProfile());
-        User updatedUser = userService.updateUser(id, user);
-        return ResponseEntity.ok(UserMapper.toDto(updatedUser.getProfile()));
+        UserDto createdProfile = userService.addProfile(user, request);
+        return ResponseEntity.ok(createdProfile);
     }
 }

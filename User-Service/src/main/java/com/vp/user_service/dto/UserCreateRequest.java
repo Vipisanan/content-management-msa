@@ -16,5 +16,5 @@ public class UserCreateRequest {
     @Size(min = 6, message = "Password should be at least 6 characters")
     private String password;
 
-    private ProfileCreateRequest profile;
+    private ProfileRequestDto profile;
 }

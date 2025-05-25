@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class ProfileUpdateRequest {
+public class ProfileRequestDto {
     @NotBlank(message = "Display name is required")
     @Size(min = 2, max = 50, message = "Display name should be between 2 and 50 characters")
     private String displayName;

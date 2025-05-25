@@ -1,7 +1,10 @@
 package com.vp.user_service.mapper;
 
 
-import com.vp.user_service.dto.*;
+import com.vp.user_service.dto.ProfileDto;
+import com.vp.user_service.dto.ProfileRequestDto;
+import com.vp.user_service.dto.UserCreateRequest;
+import com.vp.user_service.dto.UserDto;
 import com.vp.user_service.model.Profile;
 import com.vp.user_service.model.User;
 
@@ -22,8 +25,23 @@ public class UserMapper {
         return user;
     }
 
-    // Convert ProfileCreateRequest DTO to Profile entity
-    public static Profile toProfile(ProfileCreateRequest dto, User user) {
+    public static User addProfileToUser(User user, ProfileRequestDto profileRequestDto) {
+        if (user == null || profileRequestDto == null) return null;
+        Profile profile = toProfile(profileRequestDto);
+        profile.setUser(user); // Set the back-reference!
+        user.setProfile(profile);
+        return user;
+    }
+
+    public static Profile toProfile(ProfileRequestDto profileRequestDto) {
+        return Profile.builder()
+                .displayName(profileRequestDto.getDisplayName())
+                .bio(profileRequestDto.getBio())
+                .country(profileRequestDto.getCountry())
+                .build();
+    }
+
+    public static Profile toProfile(ProfileRequestDto dto, User user) {
         if (dto == null) return null;
         Profile profile = new Profile();
         profile.setDisplayName(dto.getDisplayName());
@@ -56,13 +74,6 @@ public class UserMapper {
         return dto;
     }
 
-    // Convert ProfileUpdateRequest DTO to existing Profile entity (update in-place)
-    public static void updateProfileFromDto(ProfileUpdateRequest dto, Profile profile) {
-        if (dto == null || profile == null) return;
-        profile.setDisplayName(dto.getDisplayName());
-        profile.setBio(dto.getBio());
-        profile.setCountry(dto.getCountry());
-    }
 
     // Convert List<User> -> List<UserDto>
     public static List<UserDto> toDtoList(List<User> users) {
