@@ -1,8 +1,10 @@
 package com.vp.notification_service.kafka;
 
 import com.vp.notification_service.constant.AppConstant;
+import com.vp.notification_service.dto.NotificationDto;
 import com.vp.notification_service.model.Notification;
 import com.vp.notification_service.repository.NotificationRepository;
+import com.vp.notification_service.service.NotificationSenderService;
 import com.vp.notification_service.service.SubscriptionService;
 import lombok.AllArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -16,6 +18,7 @@ public class NotificationKafkaListener {
 
     private final NotificationRepository notificationRepo;
     private final SubscriptionService subscriptionService;
+    private final NotificationSenderService notificationSenderService;
 
     @KafkaListener(topics = AppConstant.CONTENT_EVENT_KTP, groupId = "notification-service-group")
     public void handleContentEvent(ContentEvent event) {
@@ -30,6 +33,16 @@ public class NotificationKafkaListener {
                         .message("Content '" + event.getTitle() + "' was " + event.getType())
                         .isRead(false)
                         .build();
+                NotificationDto notificationDto = NotificationDto.builder()
+                        .userId(userId)
+                        .categoryId(notification.getCategoryId())
+                        .contentId(notification.getContentId())
+                        .type(notification.getType())
+                        .message(notification.getMessage())
+                        .isRead(notification.getIsRead())
+                        .build();
+
+                notificationSenderService.sendNotificationToUser(userId, notificationDto);
                 notificationRepo.save(notification);
             }
         }
