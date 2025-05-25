@@ -15,6 +15,7 @@ import com.vp.content_service.repository.ContentRepository;
 import com.vp.content_service.service.CategoryService;
 import com.vp.content_service.service.ContentService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -104,11 +105,17 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
+    @Transactional
     public void deleteContent(Long id) {
+        // Fetch content with categories eagerly
         Content content = contentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Content not found with id: " + id));
-        contentRepository.delete(content);
+        // Map your event BEFORE deleting
         ContentEvent contentEvent = ContentEventMapper.toEvent(content, NotificationType.DELETED);
+        // Now it's safe to delete the entity
+        contentRepository.delete(content);
+        // Send event
         kafkaTemplate.send(AppConstant.CONTENT_EVENT_KTP, contentEvent);
+
     }
 }
