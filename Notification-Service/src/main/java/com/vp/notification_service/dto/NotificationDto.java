@@ -4,6 +4,8 @@ import com.vp.notification_service.model.enums.NotificationType;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 public class NotificationDto {
@@ -14,5 +16,5 @@ public class NotificationDto {
     private NotificationType type;
     private String message;
     private Boolean isRead;
-    private String createdAt; // ISO date string, optional
+    private LocalDateTime createdAt; // ISO date string, optional
 }
