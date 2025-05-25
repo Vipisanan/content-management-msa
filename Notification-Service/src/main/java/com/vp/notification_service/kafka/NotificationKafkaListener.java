@@ -11,8 +11,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -24,24 +24,26 @@ public class NotificationKafkaListener {
 
     @KafkaListener(topics = AppConstant.CONTENT_EVENT_KTP, groupId = "notification-service-group")
     public void handleContentEvent(ContentEvent event) {
+        Set<Long> userIds = new HashSet<>();
         for (Long catId : event.getCategoryIds()) {
-            List<Long> userIds = subscriptionService.findUserIdsByCategoryId(catId);
-            for (Long userId : userIds) {
-                LocalDateTime now = LocalDateTime.now();
-                if (!Objects.equals(userId, event.getWriterId())) {
-                    Notification notification = Notification.builder()
-                            .userId(userId)
-                            .contentId(event.getContentId())
-                            .categoryId(catId)
-                            .type(event.getType())
-                            .message("Content '" + event.getTitle() + "' was " + event.getType())
-                            .isRead(false)
-                            .createdAt(now)
-                            .build();
-                    notificationSenderService.sendNotificationToUser(userId, NotificationMapper.toDto(notification));
-                    notificationRepo.save(notification);
-                }
-            }
+            userIds.addAll(subscriptionService.findUserIdsByCategoryId(catId));
+        }
+        userIds.remove(event.getWriterId()); // Exclude the writer
+
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Long userId : userIds) {
+            Notification notification = Notification.builder()
+                    .userId(userId)
+                    .contentId(event.getContentId())
+                    .categoryId(null) // or choose a representative category, or store all, as needed
+                    .type(event.getType())
+                    .message("Content '" + event.getTitle() + "' was " + event.getType())
+                    .isRead(false)
+                    .createdAt(now)
+                    .build();
+            notificationSenderService.sendNotificationToUser(userId, NotificationMapper.toDto(notification));
+            notificationRepo.save(notification);
         }
     }
 }
