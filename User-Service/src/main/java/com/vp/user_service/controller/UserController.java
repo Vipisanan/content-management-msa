@@ -68,4 +68,11 @@ public class UserController {
         UserDto createdProfile = userService.addProfile(user, request);
         return ResponseEntity.ok(createdProfile);
     }
+
+    // Bulk fetch users by IDs
+    @PostMapping("/bulk")
+    public ResponseEntity<List<UserDto>> getUsersByIds(@RequestBody List<Long> userIds) {
+        List<UserDto> users = userService.getUsersByIds(userIds);
+        return ResponseEntity.ok(users);
+    }
 }

@@ -23,4 +23,6 @@ public interface UserService {
     void deleteUser(Long id);
 
     UserDto addProfile(User user, ProfileRequestDto profileDto);
+
+    List<UserDto> getUsersByIds(List<Long> userIds);
 }

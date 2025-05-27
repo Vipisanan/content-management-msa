@@ -7,6 +7,8 @@ import com.vp.content_service.model.Comment;
 import com.vp.content_service.model.Content;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 public class CommentMapper {
 
@@ -17,6 +19,7 @@ public class CommentMapper {
                 .content(content)
                 .userId(dto.getUserId())
                 .text(dto.getText())
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 
@@ -33,7 +36,7 @@ public class CommentMapper {
         return CommentDto.builder()
                 .id(comment.getId())
                 .contentId(comment.getContent() != null ? comment.getContent().getId() : null)
-                .userId(comment.getUserId() != null ? comment.getId() : null)
+                .userId(comment.getUserId())
                 .text(comment.getText())
                 .createdAt(comment.getCreatedAt())
                 .build();

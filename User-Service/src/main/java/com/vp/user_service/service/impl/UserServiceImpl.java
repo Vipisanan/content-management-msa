@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -63,5 +64,13 @@ public class UserServiceImpl implements UserService {
         user = UserMapper.addProfileToUser(user, profileDto);
         userRepository.save(user);
         return UserMapper.toDto(user);
+    }
+
+    @Override
+    public List<UserDto> getUsersByIds(List<Long> userIds) {
+        List<User> users = userRepository.findByIdIn(userIds);
+        return users.stream()
+                .map(UserMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

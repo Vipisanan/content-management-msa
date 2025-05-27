@@ -63,4 +63,13 @@ public class CommentServiceImpl implements CommentService {
     public void deleteComment(Long id) {
         commentRepository.deleteById(id);
     }
+
+
+    @Override
+    public List<CommentDto> getCommentsByContentId(Long contentId) {
+        List<Comment> comments = commentRepository.findByContentId(contentId);
+        return comments.stream()
+                .map(commentMapper::toDto)
+                .collect(Collectors.toList());
+    }
 }
