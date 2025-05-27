@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -36,4 +37,7 @@ public class Content {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private Set<Category> categories;
+
+    @OneToMany(mappedBy = "content", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comment> comments;
 }
