@@ -51,3 +51,14 @@ services:
       SPRING_PROFILES_ACTIVE: docker
     ports:
       - "8083:8080"
+
+  frontend:
+    build:
+      context: ../FE/content-publication
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - user-service
+      - content-service
+      - notification-service
