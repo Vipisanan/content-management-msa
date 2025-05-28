@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @Component
 public class CommentMapper {
 
-    // You will need to fetch Content and User by their IDs in your service layer.
-    // Here, pass them as parameters for entity creation.
     public Comment toEntity(CommentCreateRequest dto, Content content) {
         return Comment.builder()
                 .content(content)
@@ -23,13 +21,6 @@ public class CommentMapper {
                 .build();
     }
 
-    // Overload for simple mapping when content and user are handled elsewhere
-    public Comment toEntity(CommentCreateRequest dto) {
-        Comment comment = new Comment();
-        comment.setText(dto.getText());
-        // content and user should be set in the service layer!
-        return comment;
-    }
 
     public CommentDto toDto(Comment comment) {
         if (comment == null) return null;
@@ -46,6 +37,5 @@ public class CommentMapper {
         if (dto.getText() != null) {
             comment.setText(dto.getText());
         }
-        // Other fields, if needed, can be updated here
     }
 }

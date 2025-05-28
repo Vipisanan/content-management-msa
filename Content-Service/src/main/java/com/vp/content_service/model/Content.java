@@ -23,7 +23,8 @@ public class Content {
 
     private String title;
 
-    @Column(length = 2048)
+    @Lob
+    @Column
     private String details;
 
     private LocalDateTime datePublished;
