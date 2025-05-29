@@ -10,6 +10,7 @@ import com.vp.content_service.model.Content;
 import com.vp.content_service.repository.CommentRepository;
 import com.vp.content_service.repository.ContentRepository;
 import com.vp.content_service.service.CommentService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +67,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
+    @Transactional
     public List<CommentDto> getCommentsByContentId(Long contentId) {
         List<Comment> comments = commentRepository.findByContentId(contentId);
         return comments.stream()
