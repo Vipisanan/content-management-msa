@@ -37,7 +37,8 @@ public class AuthService {
     }
 
     public User registerUser(UserCreateRequest userCreateRequest) {
-        if (userRepository.existsByEmail(userCreateRequest.getEmail())) {
+        String normalizedEmail = userCreateRequest.getEmail().toLowerCase();
+        if (userRepository.existsByEmail(normalizedEmail)) {
             throw new UserAlreadyExistsException("User already registered");
         }
         User user = UserMapper.toUser(userCreateRequest);

@@ -19,6 +19,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @Setter(AccessLevel.NONE)
     private String email;
 
     @Column(nullable = false)
@@ -33,5 +34,9 @@ public class User {
 
     public boolean canPublish() {
         return profile != null && profile.isCompleted();
+    }
+
+    public void setEmail(String email) {
+        this.email = email == null ? null : email.toLowerCase();
     }
 }
