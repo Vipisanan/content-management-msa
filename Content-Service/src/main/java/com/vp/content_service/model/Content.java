@@ -30,7 +30,6 @@ public class Content {
     private LocalDateTime datePublished;
     private LocalDateTime updatedAt;
 
-    // Simple ManyToMany mapping, no explicit join entity!
     @ManyToMany
     @JoinTable(
             name = "content_category",
