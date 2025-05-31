@@ -14,6 +14,7 @@ import com.vp.content_service.repository.CategoryRepository;
 import com.vp.content_service.repository.ContentRepository;
 import com.vp.content_service.service.CategoryService;
 import com.vp.content_service.service.ContentService;
+import com.vp.content_service.service.ProducerService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,7 @@ public class ContentServiceImpl implements ContentService {
     private final ContentMapper contentMapper;
     private final CategoryService categoryService;
     private final KafkaTemplate<String, ContentEvent> kafkaTemplate;
+    private final ProducerService producerService;
 
 
     @Override
@@ -67,7 +69,7 @@ public class ContentServiceImpl implements ContentService {
         // Save and map back to DTO
         Content saved = contentRepository.save(content);
         ContentEvent contentEvent = ContentEventMapper.toEvent(saved, NotificationType.PUBLISHED);
-        kafkaTemplate.send(AppConstant.CONTENT_EVENT_KTP, contentEvent);
+        producerService.sendMessage(AppConstant.CONTENT_EVENT_KTP, contentEvent);
         return contentMapper.toDto(saved);
     }
 
@@ -100,7 +102,7 @@ public class ContentServiceImpl implements ContentService {
 
         Content updated = contentRepository.save(content);
         ContentEvent contentEvent = ContentEventMapper.toEvent(updated, NotificationType.UPDATED);
-        kafkaTemplate.send(AppConstant.CONTENT_EVENT_KTP, contentEvent);
+        producerService.sendMessage(AppConstant.CONTENT_EVENT_KTP, contentEvent);
         return contentMapper.toDto(updated);
     }
 
@@ -115,7 +117,7 @@ public class ContentServiceImpl implements ContentService {
         // Now it's safe to delete the entity
         contentRepository.delete(content);
         // Send event
-        kafkaTemplate.send(AppConstant.CONTENT_EVENT_KTP, contentEvent);
+        producerService.sendMessage(AppConstant.CONTENT_EVENT_KTP, contentEvent);
 
     }
 }

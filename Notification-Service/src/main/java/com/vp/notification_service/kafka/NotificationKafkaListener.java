@@ -40,7 +40,7 @@ public class NotificationKafkaListener {
                 .map(userId -> Notification.builder()
                         .userId(userId)
                         .contentId(event.getContentId())
-                        .categoryId(null) // or choose a representative category, or store all, as needed
+                        .categoryId(null) //TODO: or choose a representative category, or store all, as needed
                         .type(event.getType())
                         .message(buildReadableMessage(event.getTitle(), event.getType()))
                         .isRead(false)
