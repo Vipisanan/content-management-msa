@@ -7,7 +7,6 @@ import com.vp.user_service.dto.UserDto;
 import com.vp.user_service.mapper.UserMapper;
 import com.vp.user_service.model.User;
 import com.vp.user_service.service.AuthService;
-import com.vp.user_service.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    private final UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request) {
