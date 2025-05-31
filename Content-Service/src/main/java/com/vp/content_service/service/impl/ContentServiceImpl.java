@@ -21,7 +21,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,7 +38,6 @@ public class ContentServiceImpl implements ContentService {
     private final CategoryRepository categoryRepository;
     private final ContentMapper contentMapper;
     private final CategoryService categoryService;
-    private final KafkaTemplate<String, ContentEvent> kafkaTemplate;
     private final ProducerService producerService;
 
 
