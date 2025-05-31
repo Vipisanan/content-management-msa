@@ -13,6 +13,8 @@ public class KafkaConfig {
     public NewTopic topic() {
         return TopicBuilder
                 .name(AppConstant.CONTENT_EVENT_KTP)
+                .partitions(3)    // number of partitions (for scalability)
+                .replicas(3)       // replication factor (for high availability)
                 .build();
     }
 }
